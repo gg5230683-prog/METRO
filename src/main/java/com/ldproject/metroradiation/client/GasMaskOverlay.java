@@ -26,6 +26,7 @@ public class GasMaskOverlay {
     public static void onRenderGuiOverlay(RenderGuiOverlayEvent.Post event) {
         boolean hasGasMask = GasMaskClientCache.hasGasMask;
         boolean transitionActive = GasMaskClientCache.transitionActive;
+        boolean transitionRendered = false;
 
         if (!hasGasMask && !transitionActive) {
             return; // Противогаз не надет
@@ -55,18 +56,23 @@ public class GasMaskOverlay {
                 Tesselator tesselator = Tesselator.getInstance();
                 BufferBuilder bufferbuilder = tesselator.getBuilder();
                 bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                bufferbuilder.vertex(0, screenHeight, -90).color(0.0F, 0.0F, 0.0F, fade * 0.6F).endVertex();
-                bufferbuilder.vertex(screenWidth, screenHeight, -90).color(0.0F, 0.0F, 0.0F, fade * 0.6F).endVertex();
-                bufferbuilder.vertex(screenWidth, 0, -90).color(0.0F, 0.0F, 0.0F, fade * 0.6F).endVertex();
-                bufferbuilder.vertex(0, 0, -90).color(0.0F, 0.0F, 0.0F, fade * 0.6F).endVertex();
+                bufferbuilder.vertex(0, screenHeight, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                bufferbuilder.vertex(screenWidth, screenHeight, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                bufferbuilder.vertex(screenWidth, 0, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                bufferbuilder.vertex(0, 0, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
                 tesselator.end();
 
                 RenderSystem.depthMask(true);
                 RenderSystem.enableDepthTest();
+                transitionRendered = true;
             }
         }
 
         if (!hasGasMask) {
+            if (transitionRendered) {
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.disableBlend();
+            }
             return;
         }
 
