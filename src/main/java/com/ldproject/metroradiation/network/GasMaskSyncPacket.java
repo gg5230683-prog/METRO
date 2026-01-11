@@ -1,0 +1,46 @@
+package com.ldproject.metroradiation.network;
+
+import com.ldproject.metroradiation.client.GasMaskClientCache;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
+
+/**
+ * Пакет синхронизации данных противогаза с сервера на клиент
+ */
+public class GasMaskSyncPacket {
+
+    private final boolean hasGasMask;
+    private final int filterTime;
+    private final int durability;
+
+    public GasMaskSyncPacket(boolean hasGasMask, int filterTime, int durability) {
+        this.hasGasMask = hasGasMask;
+        this.filterTime = filterTime;
+        this.durability = durability;
+    }
+
+    public static void encode(GasMaskSyncPacket msg, FriendlyByteBuf buf) {
+        buf.writeBoolean(msg.hasGasMask);
+        buf.writeInt(msg.filterTime);
+        buf.writeInt(msg.durability);
+    }
+
+    public static GasMaskSyncPacket decode(FriendlyByteBuf buf) {
+        return new GasMaskSyncPacket(
+                buf.readBoolean(),
+                buf.readInt(),
+                buf.readInt()
+        );
+    }
+
+    public static void handle(GasMaskSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            GasMaskClientCache.hasGasMask = msg.hasGasMask;
+            GasMaskClientCache.filterTime = msg.filterTime;
+            GasMaskClientCache.durability = msg.durability;
+        });
+        ctx.get().setPacketHandled(true);
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "geiger": {
+    "category": "master",
+    "sounds": ["metro_radiation:geiger"]
+  },
+  "radiation_breath": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "metro_radiation:radiation_breath",
+        "stream": true
+      }
+    ]
+  }
+}

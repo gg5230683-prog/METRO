@@ -1,0 +1,9 @@
+{
+  "item.metro_radiation.gas_mask": "Gas Mask",
+  "item.metro_radiation.gas_filter": "Gas Filter",
+  
+  "key.categories.metro_radiation": "Metro Radiation",
+  "key.metro_radiation.gasmask": "Gas Mask Toggle",
+  
+  "effect.metro_radiation.radiation_choking": "Radiation Choking"
+}
