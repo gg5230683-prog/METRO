@@ -1,17 +1,17 @@
 package com.ldproject.metroradiation.client;
 
-import com.ldproject.metroradiation.ModSounds;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 
 public class RadiationBreathLoopSound extends AbstractTickableSoundInstance {
 
     private final LocalPlayer player;
 
-    public RadiationBreathLoopSound(LocalPlayer player) {
-        super(ModSounds.RADIATION_BREATH.get(), SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
+    public RadiationBreathLoopSound(LocalPlayer player, SoundEvent soundEvent) {
+        super(soundEvent, SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
         
         // ✅ ИСПРАВЛЕНИЕ: Проверка на null в конструкторе
         if (player == null) {

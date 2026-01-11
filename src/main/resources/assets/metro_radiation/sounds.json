@@ -12,8 +12,21 @@
       }
     ]
   },
+  "gasmask_breath": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "metro_radiation:radiation_breath",
+        "stream": true
+      }
+    ]
+  },
   "filter_warning": {
     "category": "player",
     "sounds": ["metro_radiation:filter_warning"]
+  },
+  "filter_screw": {
+    "category": "player",
+    "sounds": ["metro_radiation:filter_insert"]
   }
 }
