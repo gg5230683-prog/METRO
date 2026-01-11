@@ -1,5 +1,6 @@
 package com.ldproject.metroradiation.gasmask;
 
+import com.ldproject.metroradiation.ModSounds;
 import com.ldproject.metroradiation.item.ModItems;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -68,7 +69,7 @@ public class GasMaskManager {
 
         // Звук замены фильтра
         player.level().playSound(null, player.blockPosition(),
-                SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1.0F, 1.2F);
+                ModSounds.FILTER_SCREW.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
         return true;
     }

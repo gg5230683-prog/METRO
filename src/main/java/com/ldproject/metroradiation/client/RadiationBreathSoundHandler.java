@@ -1,6 +1,8 @@
 package com.ldproject.metroradiation.client;
 
+import com.ldproject.metroradiation.ModSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -9,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 public class RadiationBreathSoundHandler {
 
     private static RadiationBreathLoopSound loopSound;
+    private static SoundEvent currentSound;
     private static boolean isPlaying = false;
 
     @SubscribeEvent
@@ -21,19 +24,28 @@ public class RadiationBreathSoundHandler {
             return;
         }
 
-        // Звук дыхания только если:
-        // 1. Есть радиация
-        // 2. Противогаз не надет ИЛИ фильтр кончился
-        boolean shouldPlay = ClientRadiationCache.radiation > 0 && 
-                            (!GasMaskClientCache.hasGasMask || GasMaskClientCache.filterTime <= 0);
+        boolean hasRadiation = ClientRadiationCache.radiation > 0;
+        boolean hasGasMask = GasMaskClientCache.hasGasMask;
+        boolean hasValidFilter = GasMaskClientCache.filterTime > 0;
 
-        if (shouldPlay && !isPlaying) {
-            loopSound = new RadiationBreathLoopSound(mc.player);
+        SoundEvent desiredSound = null;
+        if (hasRadiation) {
+            if (hasGasMask && hasValidFilter) {
+                desiredSound = ModSounds.GASMASK_BREATH.get();
+            } else {
+                desiredSound = ModSounds.RADIATION_BREATH.get();
+            }
+        }
+
+        if (desiredSound != null && (!isPlaying || desiredSound != currentSound)) {
+            stop(mc);
+            loopSound = new RadiationBreathLoopSound(mc.player, desiredSound);
             mc.getSoundManager().play(loopSound);
+            currentSound = desiredSound;
             isPlaying = true;
         }
 
-        if (!shouldPlay && isPlaying) {
+        if (desiredSound == null && isPlaying) {
             stop(mc);
         }
     }
@@ -43,6 +55,7 @@ public class RadiationBreathSoundHandler {
             mc.getSoundManager().stop(loopSound);
             loopSound = null;
         }
+        currentSound = null;
         isPlaying = false;
     }
 }
