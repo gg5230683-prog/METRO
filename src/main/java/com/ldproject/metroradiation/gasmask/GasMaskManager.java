@@ -49,6 +49,10 @@ public class GasMaskManager {
             return false; // Противогаз не надет
         }
 
+        if (GasMaskData.hasValidFilter(player)) {
+            return false; // Фильтр уже установлен
+        }
+
         // Ищем фильтр в инвентаре
         ItemStack filter = findItemInInventory(player, ModItems.GAS_FILTER.get().asItem());
         if (filter.isEmpty()) {
@@ -99,6 +103,28 @@ public class GasMaskManager {
     }
 
     public static boolean tryEquipGasMask(ServerPlayer player) {
-        return false;
+        if (GasMaskData.hasGasMask(player)) {
+            return false;
+        }
+
+        ItemStack gasMaskStack = findItemInInventory(player, ModItems.GAS_MASK.get().asItem());
+        if (gasMaskStack.isEmpty()) {
+            return false;
+        }
+
+        int maxDurability = gasMaskStack.getMaxDamage();
+        int damage = gasMaskStack.getDamageValue();
+        int durability = Math.max(0, maxDurability - damage);
+
+        gasMaskStack.shrink(1);
+
+        GasMaskData.setGasMask(player, true);
+        GasMaskData.setDurability(player, durability);
+        GasMaskData.resetWarning(player);
+
+        player.level().playSound(null, player.blockPosition(),
+                SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 1.0F, 1.0F);
+
+        return true;
     }
 }
