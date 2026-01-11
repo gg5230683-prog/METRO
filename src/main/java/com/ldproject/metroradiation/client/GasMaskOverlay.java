@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,12 +16,19 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = MetroRadiation.MODID, value = Dist.CLIENT)
 public class GasMaskOverlay {
 
-    // Текстуры (пока заглушки, потом добавишь свои)
-    private static final ResourceLocation VIGNETTE = new ResourceLocation("textures/misc/vignette.png");
+    // Текстура виньетки противогаза
+    private static final ResourceLocation VIGNETTE = new ResourceLocation(
+            MetroRadiation.MODID,
+            "textures/gui/gasmask_vignette.png"
+    );
 
     @SubscribeEvent
     public static void onRenderGuiOverlay(RenderGuiOverlayEvent.Post event) {
-        if (!GasMaskClientCache.hasGasMask) {
+        boolean hasGasMask = GasMaskClientCache.hasGasMask;
+        boolean transitionActive = GasMaskClientCache.transitionActive;
+        boolean transitionRendered = false;
+
+        if (!hasGasMask && !transitionActive) {
             return; // Противогаз не надет
         }
 
@@ -29,8 +37,37 @@ public class GasMaskOverlay {
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
 
+        // ========== КОРОТКОЕ ПЛАВНОЕ ЗАТЕМНЕНИЕ ПРИ СНЯТИИ/НАДЕВАНИИ ==========
+
+        if (transitionActive) {
+            long elapsed = Util.getMillis() - GasMaskClientCache.transitionStartMs;
+            if (elapsed >= GasMaskClientCache.TRANSITION_DURATION_MS) {
+                GasMaskClientCache.transitionActive = false;
+            } else {
+                float progress = (float) elapsed / GasMaskClientCache.TRANSITION_DURATION_MS;
+                float fade = progress <= 0.5F ? (progress * 2.0F) : (1.0F - progress) * 2.0F;
+
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, fade * 0.95F);
+                RenderSystem.setShaderTexture(0, VIGNETTE);
+
+                guiGraphics.blit(VIGNETTE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight);
+                transitionRendered = true;
+            }
+        }
+
+        if (!hasGasMask) {
+            if (transitionRendered) {
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.disableBlend();
+            }
+            return;
+        }
+
         // ========== ЗАТЕМНЕНИЕ КРАЕВ (ВИНЬЕТКА) ==========
-        
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
