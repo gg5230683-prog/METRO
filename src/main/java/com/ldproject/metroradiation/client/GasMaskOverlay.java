@@ -15,8 +15,11 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = MetroRadiation.MODID, value = Dist.CLIENT)
 public class GasMaskOverlay {
 
-    // Текстуры (пока заглушки, потом добавишь свои)
-    private static final ResourceLocation VIGNETTE = new ResourceLocation("textures/misc/vignette.png");
+    // Текстура виньетки противогаза
+    private static final ResourceLocation VIGNETTE = new ResourceLocation(
+            MetroRadiation.MODID,
+            "textures/gui/gasmask_vignette.png"
+    );
 
     @SubscribeEvent
     public static void onRenderGuiOverlay(RenderGuiOverlayEvent.Post event) {
