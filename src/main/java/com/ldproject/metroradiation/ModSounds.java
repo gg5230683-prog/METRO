@@ -19,9 +19,17 @@ public class ModSounds {
         SOUNDS.register("radiation_breath",
                 () -> SoundEvent.createVariableRangeEvent(
                         new ResourceLocation(MetroRadiation.MODID, "radiation_breath")));
+    public static final RegistryObject<SoundEvent> GASMASK_BREATH =
+            SOUNDS.register("gasmask_breath",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            new ResourceLocation(MetroRadiation.MODID, "gasmask_breath")));
     public static final RegistryObject<SoundEvent> FILTER_WARNING =
             SOUNDS.register("filter_warning",
                     () -> SoundEvent.createVariableRangeEvent(
                             new ResourceLocation(MetroRadiation.MODID, "filter_warning")));
+    public static final RegistryObject<SoundEvent> FILTER_SCREW =
+            SOUNDS.register("filter_screw",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            new ResourceLocation(MetroRadiation.MODID, "filter_screw")));
 
 }
