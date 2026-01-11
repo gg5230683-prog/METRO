@@ -47,13 +47,23 @@ public class GasMaskOverlay {
                 float progress = (float) elapsed / GasMaskClientCache.TRANSITION_DURATION_MS;
                 float fade = progress <= 0.5F ? (progress * 2.0F) : (1.0F - progress) * 2.0F;
 
+                RenderSystem.disableDepthTest();
+                RenderSystem.depthMask(false);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, fade * 0.95F);
-                RenderSystem.setShaderTexture(0, VIGNETTE);
+                RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-                guiGraphics.blit(VIGNETTE, 0, 0, 0, 0, screenWidth, screenHeight, screenWidth, screenHeight);
+                Tesselator tesselator = Tesselator.getInstance();
+                BufferBuilder bufferbuilder = tesselator.getBuilder();
+                bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+                bufferbuilder.vertex(0, screenHeight, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                bufferbuilder.vertex(screenWidth, screenHeight, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                bufferbuilder.vertex(screenWidth, 0, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                bufferbuilder.vertex(0, 0, -90).color(0.0F, 0.0F, 0.0F, fade).endVertex();
+                tesselator.end();
+
+                RenderSystem.depthMask(true);
+                RenderSystem.enableDepthTest();
                 transitionRendered = true;
             }
         }
