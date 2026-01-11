@@ -37,6 +37,9 @@ public class GasMaskSyncPacket {
 
     public static void handle(GasMaskSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            if (GasMaskClientCache.hasGasMask != msg.hasGasMask) {
+                GasMaskClientCache.startTransition();
+            }
             GasMaskClientCache.hasGasMask = msg.hasGasMask;
             GasMaskClientCache.filterTime = msg.filterTime;
             GasMaskClientCache.durability = msg.durability;

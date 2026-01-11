@@ -3,12 +3,12 @@ package com.ldproject.metroradiation.events;
 import com.ldproject.metroradiation.effect.ModEffects;
 import com.ldproject.metroradiation.gasmask.GasMaskData;
 import com.ldproject.metroradiation.gasmask.GasMaskManager;
+import com.ldproject.metroradiation.ModSounds;
 import com.ldproject.metroradiation.network.GasMaskSyncPacket;
 import com.ldproject.metroradiation.network.ModNetwork;
 import com.ldproject.metroradiation.network.RadiationSyncPacket;
 import com.ldproject.metroradiation.radiation.RadiationManager;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -108,7 +108,8 @@ public class PlayerTickHandler {
                     !GasMaskData.hasWarningPlayed(player)) {
                     
                     player.level().playSound(null, player.blockPosition(),
-                        SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.PLAYERS, 1.0F, 2.0F);
+                        ModSounds.FILTER_WARNING.get(),
+                        SoundSource.PLAYERS, 1.0F, 1.0F);
                     GasMaskData.setWarningPlayed(player, true);
                 }
             }
