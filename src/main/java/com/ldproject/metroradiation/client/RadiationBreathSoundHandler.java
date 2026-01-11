@@ -26,11 +26,10 @@ public class RadiationBreathSoundHandler {
 
         boolean hasRadiation = ClientRadiationCache.radiation > 0;
         boolean hasGasMask = GasMaskClientCache.hasGasMask;
-        boolean hasValidFilter = GasMaskClientCache.filterTime > 0;
 
         SoundEvent desiredSound = null;
         if (hasRadiation) {
-            if (hasGasMask && hasValidFilter) {
+            if (hasGasMask) {
                 desiredSound = ModSounds.GASMASK_BREATH.get();
             } else {
                 desiredSound = ModSounds.RADIATION_BREATH.get();
