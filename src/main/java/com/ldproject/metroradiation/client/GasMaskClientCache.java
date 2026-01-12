@@ -19,6 +19,11 @@ public class GasMaskClientCache {
     public static long yKeyReleaseStartMs = 0L;
     public static final long Y_FADE_DURATION_MS = 600L; // 600мс для очень плавного fade
 
+    // Плавное сглаживание прозрачности таймера
+    public static float timerAlpha = 0.0F;
+    public static long timerAlphaLastUpdateMs = 0L;
+    public static final long TIMER_ALPHA_SMOOTH_MS = 300L;
+
     public static void startTransition() {
         transitionStartMs = net.minecraft.Util.getMillis();
         transitionActive = true;
