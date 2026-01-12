@@ -39,8 +39,6 @@ public class GasMaskOverlay {
         boolean transitionRendered = false;
 
         if (!hasGasMask && !transitionActive) {
-            GasMaskClientCache.timerAlpha = 0.0F;
-            GasMaskClientCache.timerAlphaLastUpdateMs = 0L;
             return; // Противогаз не надет
         }
 
@@ -147,14 +145,11 @@ public class GasMaskOverlay {
             filterText = "NO FILTER!";
         }
 
-        float targetAlpha = 0.0F;
+        float timerAlpha = 0.0F;
+        boolean alwaysShowNoFilter = filterTime <= 0;
         
-        // Приоритет 1: Если фильтр закончился - показываем постоянно
-        if (filterTime <= 0) {
-            targetAlpha = 1.0F;
-        }
-        // Приоритет 2: Плавное появление/исчезновение при нажатии Y
-        else if (GasMaskClientCache.forceShowTimer || GasMaskClientCache.yKeyReleaseStartMs > 0) {
+        // Приоритет 1: Плавное появление/исчезновение при нажатии Y
+        if (GasMaskClientCache.forceShowTimer || GasMaskClientCache.yKeyReleaseStartMs > 0) {
             long currentTime = Util.getMillis();
             
             // Fade in (при нажатии Y) - используем sine для суперплавности
@@ -162,24 +157,18 @@ public class GasMaskOverlay {
                 long elapsed = currentTime - GasMaskClientCache.yKeyPressStartMs;
                 if (elapsed < GasMaskClientCache.Y_FADE_DURATION_MS) {
                     float progress = (float) elapsed / GasMaskClientCache.Y_FADE_DURATION_MS;
-                    targetAlpha = easeInOutSine(progress);
+                    timerAlpha = easeInOutSine(progress);
                 } else {
-                    targetAlpha = 1.0F;
+                    timerAlpha = 1.0F;
                 }
             }
-            // Fade out (при отпускании Y) - используем sine для суперплавности
+            // Резкое исчезновение при отпускании Y
             else if (!GasMaskClientCache.forceShowTimer && GasMaskClientCache.yKeyReleaseStartMs > 0) {
-                long elapsed = currentTime - GasMaskClientCache.yKeyReleaseStartMs;
-                if (elapsed < GasMaskClientCache.Y_FADE_DURATION_MS) {
-                    float progress = (float) elapsed / GasMaskClientCache.Y_FADE_DURATION_MS;
-                    targetAlpha = 1.0F - easeInOutSine(progress);
-                } else {
-                    targetAlpha = 0.0F;
-                    GasMaskClientCache.yKeyReleaseStartMs = 0L; // Сбрасываем
-                }
+                timerAlpha = 0.0F;
+                GasMaskClientCache.yKeyReleaseStartMs = 0L; // Сбрасываем
             }
         }
-        // Приоритет 3: Автоматическое появление/исчезновение после смены фильтра
+        // Приоритет 2: Автоматическое появление/исчезновение после смены фильтра
         else {
             long elapsed = Util.getMillis() - GasMaskClientCache.filterDisplayStartMs;
             if (elapsed >= 0 && elapsed <= GasMaskClientCache.FILTER_DISPLAY_DURATION_MS) {
@@ -188,35 +177,20 @@ public class GasMaskOverlay {
                 // Плавное появление в первые 15% времени (900мс из 6000мс)
                 if (progress < 0.15F) {
                     float fadeProgress = progress / 0.15F;
-                    targetAlpha = easeInOutSine(fadeProgress);
+                    timerAlpha = easeInOutSine(fadeProgress);
                 }
-                // Удержание на 100% в течение 70% времени (4200мс из 6000мс)
-                else if (progress < 0.85F) {
-                    targetAlpha = 1.0F;
-                }
-                // Плавное исчезновение в последние 15% времени (900мс из 6000мс)
+                // Удержание на 100% до конца времени отображения
                 else {
-                    float fadeProgress = (progress - 0.85F) / 0.15F;
-                    targetAlpha = 1.0F - easeInOutSine(fadeProgress);
+                    timerAlpha = 1.0F;
                 }
             }
         }
 
-        long nowMs = Util.getMillis();
-        if (GasMaskClientCache.timerAlphaLastUpdateMs == 0L) {
-            GasMaskClientCache.timerAlphaLastUpdateMs = nowMs;
-            GasMaskClientCache.timerAlpha = targetAlpha;
-        } else {
-            long deltaMs = nowMs - GasMaskClientCache.timerAlphaLastUpdateMs;
-            GasMaskClientCache.timerAlphaLastUpdateMs = nowMs;
-            float step = Math.min(1.0F, deltaMs / (float) GasMaskClientCache.TIMER_ALPHA_SMOOTH_MS);
-            GasMaskClientCache.timerAlpha += (targetAlpha - GasMaskClientCache.timerAlpha) * step;
-        }
-
-        float timerAlpha = GasMaskClientCache.timerAlpha;
-
-        if (timerAlpha > 0.0F) {
+        if (timerAlpha > 0.0F || alwaysShowNoFilter) {
             int alphaChannel = Math.min(255, Math.max(0, Math.round(timerAlpha * 255.0F)));
+            if (alwaysShowNoFilter) {
+                alphaChannel = 255;
+            }
             int colorWithAlpha = (alphaChannel << 24) | (color & 0x00FFFFFF);
             guiGraphics.drawString(mc.font, filterText, 10, 10, colorWithAlpha);
         }
