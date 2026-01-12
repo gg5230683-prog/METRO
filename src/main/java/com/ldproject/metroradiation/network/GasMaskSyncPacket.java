@@ -37,12 +37,25 @@ public class GasMaskSyncPacket {
 
     public static void handle(GasMaskSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            if (GasMaskClientCache.hasGasMask != msg.hasGasMask) {
+            boolean hadGasMask = GasMaskClientCache.hasGasMask;
+            int previousFilterTime = GasMaskClientCache.filterTime;
+
+            if (hadGasMask != msg.hasGasMask) {
                 GasMaskClientCache.startTransition();
             }
             GasMaskClientCache.hasGasMask = msg.hasGasMask;
             GasMaskClientCache.filterTime = msg.filterTime;
             GasMaskClientCache.durability = msg.durability;
+
+            if (msg.hasGasMask) {
+                boolean filterInstalled = msg.filterTime > previousFilterTime;
+                boolean justEquippedWithFilter = !hadGasMask && msg.filterTime > 0;
+                boolean reachedOneMinute = previousFilterTime > 1200 && msg.filterTime <= 1200;
+
+                if (filterInstalled || justEquippedWithFilter || reachedOneMinute) {
+                    GasMaskClientCache.startFilterDisplay();
+                }
+            }
         });
         ctx.get().setPacketHandled(true);
     }
