@@ -40,9 +40,6 @@ public class GasMaskSyncPacket {
             boolean hadGasMask = GasMaskClientCache.hasGasMask;
             int previousFilterTime = GasMaskClientCache.filterTime;
 
-            if (hadGasMask != msg.hasGasMask) {
-                GasMaskClientCache.startTransition();
-            }
             GasMaskClientCache.hasGasMask = msg.hasGasMask;
             GasMaskClientCache.filterTime = msg.filterTime;
             GasMaskClientCache.durability = msg.durability;
