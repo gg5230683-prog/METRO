@@ -1,9 +1,11 @@
 package com.ldproject.metroradiation.network;
 
+import com.ldproject.metroradiation.gasmask.GasMaskData;
 import com.ldproject.metroradiation.gasmask.GasMaskManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -54,6 +56,19 @@ public class GasMaskActionPacket {
                     GasMaskManager.tryReplaceFilter(player);
                     break;
             }
+
+            boolean hasGasMask = GasMaskData.hasGasMask(player);
+            GasMaskSyncPacket syncPacket = hasGasMask
+                    ? new GasMaskSyncPacket(
+                            true,
+                            GasMaskData.getFilterTime(player),
+                            GasMaskData.getDurability(player)
+                    )
+                    : new GasMaskSyncPacket(false, 0, 0);
+            ModNetwork.CHANNEL.send(
+                    PacketDistributor.PLAYER.with(() -> player),
+                    syncPacket
+            );
         });
         ctx.get().setPacketHandled(true);
     }
