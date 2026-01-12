@@ -26,15 +26,16 @@ public class RadiationBreathSoundHandler {
 
         boolean hasRadiation = ClientRadiationCache.radiation > 0;
         boolean hasGasMask = GasMaskClientCache.hasGasMask;
-        boolean hasValidFilter = GasMaskClientCache.filterTime > 0;
 
         SoundEvent desiredSound = null;
-        if (hasRadiation) {
-            if (hasGasMask && hasValidFilter) {
-                desiredSound = ModSounds.GASMASK_BREATH.get();
-            } else {
-                desiredSound = ModSounds.RADIATION_BREATH.get();
-            }
+        
+        // Звук дыхания в противогазе играет ВСЕГДА когда противогаз надет
+        if (hasGasMask) {
+            desiredSound = ModSounds.GASMASK_BREATH.get();
+        }
+        // Звук задыхания от радиации только если НЕТ противогаза и ЕСТЬ радиация
+        else if (hasRadiation) {
+            desiredSound = ModSounds.RADIATION_BREATH.get();
         }
 
         if (desiredSound != null && (!isPlaying || desiredSound != currentSound)) {

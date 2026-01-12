@@ -16,7 +16,7 @@
     "category": "player",
     "sounds": [
       {
-        "name": "metro_radiation:radiation_breath",
+        "name": "metro_radiation:gasmask_radiation_breath",
         "stream": true
       }
     ]
