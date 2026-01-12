@@ -121,7 +121,7 @@ public class GasMaskOverlay {
         int filterTime = GasMaskClientCache.filterTime;
         int minutes = filterTime / 1200; // 1200 тиков = 1 минута
         int seconds = (filterTime % 1200) / 20;
-        
+
         String filterText = String.format("Filter: %d:%02d", minutes, seconds);
         
         // Цвет в зависимости от времени
@@ -135,7 +135,22 @@ public class GasMaskOverlay {
             filterText = "NO FILTER!";
         }
 
-        guiGraphics.drawString(mc.font, filterText, 10, 10, color);
+        float timerAlpha = 0.0F;
+        if (filterTime <= 0) {
+            timerAlpha = 1.0F;
+        } else {
+            long elapsed = Util.getMillis() - GasMaskClientCache.filterDisplayStartMs;
+            if (elapsed >= 0 && elapsed <= GasMaskClientCache.FILTER_DISPLAY_DURATION_MS) {
+                float progress = (float) elapsed / GasMaskClientCache.FILTER_DISPLAY_DURATION_MS;
+                timerAlpha = 1.0F - progress;
+            }
+        }
+
+        if (timerAlpha > 0.0F) {
+            int alphaChannel = Math.min(255, Math.max(0, Math.round(timerAlpha * 255.0F)));
+            int colorWithAlpha = (alphaChannel << 24) | (color & 0x00FFFFFF);
+            guiGraphics.drawString(mc.font, filterText, 10, 10, colorWithAlpha);
+        }
 
         // ✅ ИСПРАВЛЕНИЕ: Убрана надпись "Durability"
 
