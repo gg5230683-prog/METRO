@@ -1,6 +1,7 @@
 package com.ldproject.metroradiation.gasmask;
 
 import com.ldproject.metroradiation.MetroRadiation;
+import com.ldproject.metroradiation.client.GasMaskClientCache;
 import com.ldproject.metroradiation.network.GasMaskActionPacket;
 import com.ldproject.metroradiation.network.ModNetwork;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -25,11 +26,19 @@ public class GasMaskKeyHandler {
             GLFW.GLFW_KEY_T,
             CATEGORY
     );
+    
+    public static final KeyMapping VIEW_TIMER_KEY = new KeyMapping(
+            "key." + MetroRadiation.MODID + ".view_timer",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_Y,
+            CATEGORY
+    );
 
     private static int holdTicks = 0;
     private static boolean wasPressed = false;
     private static boolean actionSent = false;
     private static boolean equipSent = false; // ✅ НОВОЕ: Флаг для мгновенного надевания
+    private static boolean yKeyWasPressed = false;
 
     private static final int HOLD_DURATION_TICKS = 20; // 1 секунда = 20 тиков
 
@@ -82,6 +91,24 @@ public class GasMaskKeyHandler {
             holdTicks = 0;
             actionSent = false;
             equipSent = false;
+        }
+        
+        // Обработка клавиши просмотра таймера (Y)
+        if (VIEW_TIMER_KEY.isDown()) {
+            if (!yKeyWasPressed) {
+                // Клавиша только что нажата - запускаем fade in
+                GasMaskClientCache.yKeyPressStartMs = net.minecraft.Util.getMillis();
+                GasMaskClientCache.yKeyReleaseStartMs = 0L;
+                yKeyWasPressed = true;
+            }
+            GasMaskClientCache.forceShowTimer = true;
+        } else {
+            if (yKeyWasPressed) {
+                // Клавиша только что отпущена - запускаем fade out
+                GasMaskClientCache.yKeyReleaseStartMs = net.minecraft.Util.getMillis();
+                yKeyWasPressed = false;
+            }
+            GasMaskClientCache.forceShowTimer = false;
         }
     }
 }

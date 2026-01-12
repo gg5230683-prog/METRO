@@ -13,5 +13,6 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(GasMaskKeyHandler.GAS_MASK_KEY);
+        event.register(GasMaskKeyHandler.VIEW_TIMER_KEY);
     }
 }

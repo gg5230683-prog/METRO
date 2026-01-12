@@ -4,6 +4,7 @@
   
   "key.categories.metro_radiation": "Metro Radiation",
   "key.metro_radiation.gasmask": "Gas Mask Toggle",
+  "key.metro_radiation.view_timer": "View Filter Timer",
   
   "effect.metro_radiation.radiation_choking": "Radiation Choking"
 }

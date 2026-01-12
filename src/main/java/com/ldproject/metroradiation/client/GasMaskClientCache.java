@@ -11,7 +11,13 @@ public class GasMaskClientCache {
     public static long transitionStartMs = 0L;
     public static final long TRANSITION_DURATION_MS = 180L;
     public static long filterDisplayStartMs = 0L;
-    public static final long FILTER_DISPLAY_DURATION_MS = 2000L;
+    public static final long FILTER_DISPLAY_DURATION_MS = 6000L; // Увеличено до 6 секунд для более плавных переходов
+    public static boolean forceShowTimer = false;
+    
+    // Для плавного появления/исчезновения при нажатии Y
+    public static long yKeyPressStartMs = 0L;
+    public static long yKeyReleaseStartMs = 0L;
+    public static final long Y_FADE_DURATION_MS = 600L; // 600мс для очень плавного fade
 
     public static void startTransition() {
         transitionStartMs = net.minecraft.Util.getMillis();
