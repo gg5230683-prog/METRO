@@ -11,7 +11,7 @@ public class GasMaskClientCache {
     public static long transitionStartMs = 0L;
     public static final long TRANSITION_DURATION_MS = 180L;
     public static long filterDisplayStartMs = 0L;
-    public static final long FILTER_DISPLAY_DURATION_MS = 6000L; // Увеличено до 6 секунд для более плавных переходов
+    public static final long FILTER_DISPLAY_DURATION_MS = 2000L; // Всегда показываем таймер 2 секунды
     public static boolean forceShowTimer = false;
     
     // Для плавного появления/исчезновения при нажатии Y
