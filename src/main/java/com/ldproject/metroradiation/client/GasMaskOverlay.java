@@ -146,6 +146,7 @@ public class GasMaskOverlay {
         }
 
         float timerAlpha = 0.0F;
+        boolean alwaysShowNoFilter = filterTime <= 0;
         
         // Приоритет 1: Плавное появление/исчезновение при нажатии Y
         if (GasMaskClientCache.forceShowTimer || GasMaskClientCache.yKeyReleaseStartMs > 0) {
@@ -185,8 +186,11 @@ public class GasMaskOverlay {
             }
         }
 
-        if (timerAlpha > 0.0F) {
+        if (timerAlpha > 0.0F || alwaysShowNoFilter) {
             int alphaChannel = Math.min(255, Math.max(0, Math.round(timerAlpha * 255.0F)));
+            if (alwaysShowNoFilter) {
+                alphaChannel = 255;
+            }
             int colorWithAlpha = (alphaChannel << 24) | (color & 0x00FFFFFF);
             guiGraphics.drawString(mc.font, filterText, 10, 10, colorWithAlpha);
         }
