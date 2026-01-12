@@ -161,16 +161,10 @@ public class GasMaskOverlay {
                     timerAlpha = 1.0F;
                 }
             }
-            // Fade out (при отпускании Y) - используем sine для суперплавности
+            // Резкое исчезновение при отпускании Y
             else if (!GasMaskClientCache.forceShowTimer && GasMaskClientCache.yKeyReleaseStartMs > 0) {
-                long elapsed = currentTime - GasMaskClientCache.yKeyReleaseStartMs;
-                if (elapsed < GasMaskClientCache.Y_FADE_DURATION_MS) {
-                    float progress = (float) elapsed / GasMaskClientCache.Y_FADE_DURATION_MS;
-                    timerAlpha = 1.0F - easeInOutSine(progress);
-                } else {
-                    timerAlpha = 0.0F;
-                    GasMaskClientCache.yKeyReleaseStartMs = 0L; // Сбрасываем
-                }
+                timerAlpha = 0.0F;
+                GasMaskClientCache.yKeyReleaseStartMs = 0L; // Сбрасываем
             }
         }
         // Приоритет 2: Автоматическое появление/исчезновение после смены фильтра
@@ -184,14 +178,9 @@ public class GasMaskOverlay {
                     float fadeProgress = progress / 0.15F;
                     timerAlpha = easeInOutSine(fadeProgress);
                 }
-                // Удержание на 100% в течение 70% времени (4200мс из 6000мс)
-                else if (progress < 0.85F) {
-                    timerAlpha = 1.0F;
-                }
-                // Плавное исчезновение в последние 15% времени (900мс из 6000мс)
+                // Удержание на 100% до конца времени отображения
                 else {
-                    float fadeProgress = (progress - 0.85F) / 0.15F;
-                    timerAlpha = 1.0F - easeInOutSine(fadeProgress);
+                    timerAlpha = 1.0F;
                 }
             }
         }
