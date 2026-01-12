@@ -147,12 +147,8 @@ public class GasMaskOverlay {
 
         float timerAlpha = 0.0F;
         
-        // Приоритет 1: Если фильтр закончился - показываем постоянно
-        if (filterTime <= 0) {
-            timerAlpha = 1.0F;
-        }
-        // Приоритет 2: Плавное появление/исчезновение при нажатии Y
-        else if (GasMaskClientCache.forceShowTimer || GasMaskClientCache.yKeyReleaseStartMs > 0) {
+        // Приоритет 1: Плавное появление/исчезновение при нажатии Y
+        if (GasMaskClientCache.forceShowTimer || GasMaskClientCache.yKeyReleaseStartMs > 0) {
             long currentTime = Util.getMillis();
             
             // Fade in (при нажатии Y) - используем sine для суперплавности
@@ -177,7 +173,7 @@ public class GasMaskOverlay {
                 }
             }
         }
-        // Приоритет 3: Автоматическое появление/исчезновение после смены фильтра
+        // Приоритет 2: Автоматическое появление/исчезновение после смены фильтра
         else {
             long elapsed = Util.getMillis() - GasMaskClientCache.filterDisplayStartMs;
             if (elapsed >= 0 && elapsed <= GasMaskClientCache.FILTER_DISPLAY_DURATION_MS) {

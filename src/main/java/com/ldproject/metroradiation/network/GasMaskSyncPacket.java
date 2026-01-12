@@ -51,8 +51,9 @@ public class GasMaskSyncPacket {
                 boolean filterInstalled = msg.filterTime > previousFilterTime;
                 boolean justEquippedWithFilter = !hadGasMask && msg.filterTime > 0;
                 boolean reachedOneMinute = previousFilterTime > 1200 && msg.filterTime <= 1200;
+                boolean reachedZero = previousFilterTime > 0 && msg.filterTime <= 0;
 
-                if (filterInstalled || justEquippedWithFilter || reachedOneMinute) {
+                if (filterInstalled || justEquippedWithFilter || reachedOneMinute || reachedZero) {
                     GasMaskClientCache.startFilterDisplay();
                 }
             }
