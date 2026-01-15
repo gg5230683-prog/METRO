@@ -11,6 +11,8 @@ public class GasMaskData {
     private static final String HAS_GASMASK = "HasGasMask";
     private static final String FILTER_TIME = "FilterTime";
     private static final String GASMASK_DURABILITY = "GasMaskDurability";
+    private static final String GASMASK_MAX_DURABILITY = "GasMaskMaxDurability";
+    private static final String GASMASK_ITEM_ID = "GasMaskItemId";
     private static final String RECEIVED_STARTER_ITEMS = "ReceivedStarterItems";
     private static final String WARNING_PLAYED = "FilterWarningPlayed";
 
@@ -29,6 +31,14 @@ public class GasMaskData {
 
     public static int getDurability(Player player) {
         return player.getPersistentData().getInt(GASMASK_DURABILITY);
+    }
+
+    public static int getMaxDurability(Player player) {
+        return player.getPersistentData().getInt(GASMASK_MAX_DURABILITY);
+    }
+
+    public static String getGasMaskItemId(Player player) {
+        return player.getPersistentData().getString(GASMASK_ITEM_ID);
     }
 
     public static boolean hasReceivedStarterItems(Player player) {
@@ -51,6 +61,14 @@ public class GasMaskData {
 
     public static void setDurability(Player player, int durability) {
         player.getPersistentData().putInt(GASMASK_DURABILITY, durability);
+    }
+
+    public static void setMaxDurability(Player player, int maxDurability) {
+        player.getPersistentData().putInt(GASMASK_MAX_DURABILITY, maxDurability);
+    }
+
+    public static void setGasMaskItemId(Player player, String itemId) {
+        player.getPersistentData().putString(GASMASK_ITEM_ID, itemId);
     }
 
     public static void setReceivedStarterItems(Player player, boolean value) {
