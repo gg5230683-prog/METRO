@@ -1,0 +1,17 @@
+{
+  "values": [
+    "metro_radiation:gas_mask",
+    {
+      "id": "marbleds_arsenal:gasmask",
+      "required": false
+    },
+    {
+      "id": "marbleds_arsenal_legacy:gasmask",
+      "required": false
+    },
+    {
+      "id": "marbledsarsenal:gasmask",
+      "required": false
+    }
+  ]
+}
